@@ -16,6 +16,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ChatActivity" />
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".SettingActivity" />
+        <activity android:name=".ChangeStatusActivity" />
+        <activity android:name=".AllUsersActivity" />
+        <activity android:name=".StartPageActivity"></activity>
     </application>
 
 </manifest>
