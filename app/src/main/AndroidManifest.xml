@@ -19,7 +19,9 @@
         <activity android:name=".ChatActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".SettingActivity" />
+        <activity
+            android:name=".SettingActivity"
+            android:parentActivityName=".ChatActivity" />
         <activity android:name=".ChangeStatusActivity" />
         <activity android:name=".AllUsersActivity" />
         <activity android:name=".StartPageActivity" />

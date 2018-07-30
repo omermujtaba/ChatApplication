@@ -2,6 +2,8 @@ package com.morango.chat.chatapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -17,6 +19,11 @@ public class ChatActivity extends AppCompatActivity {
 
     Toolbar toolbar;
 
+    ViewPager mViewPager;
+    TabLayout tabLayout;
+
+    TabsPagerAdapter tabsPagerAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +31,14 @@ public class ChatActivity extends AppCompatActivity {
 
         toolbar = findViewById(R.id.chatToolBar);
         mAuth = FirebaseAuth.getInstance();
+
+        mViewPager = findViewById(R.id.chatTabsPager);
+        tabLayout = findViewById(R.id.chatTabLayout);
+        tabsPagerAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+
+        mViewPager.setAdapter(tabsPagerAdapter);
+
+        tabLayout.setupWithViewPager(mViewPager);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("ZoyaChat");
