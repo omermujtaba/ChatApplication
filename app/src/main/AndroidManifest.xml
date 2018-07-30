@@ -22,7 +22,8 @@
         <activity android:name=".SettingActivity" />
         <activity android:name=".ChangeStatusActivity" />
         <activity android:name=".AllUsersActivity" />
-        <activity android:name=".StartPageActivity"></activity>
+        <activity android:name=".StartPageActivity" />
+        <activity android:name=".StatusChangeActivity"></activity>
     </application>
 
 </manifest>

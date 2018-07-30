@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "1076561666505-9g6q346aa9a9gdnrp73d2h1d5hgiop3r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.morango.chat.chatapplication",
+            "certificate_hash": "fa0c43f3e184df8bb8e81bdaf5fe330877969815"
+          }
+        },
+        {
           "client_id": "1076561666505-jkgivik6klijvhj39bvdg96c3i5rng8n.apps.googleusercontent.com",
           "client_type": 3
         }

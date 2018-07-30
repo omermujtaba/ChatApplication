@@ -27,7 +27,6 @@ public class ChatActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("ZoyaChat");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -39,8 +38,6 @@ public class ChatActivity extends AppCompatActivity {
         if (mCurrentUser == null) {
             LogoutUser();
         }
-
-
     }
 
     private void LogoutUser() {

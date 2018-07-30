@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".StatusChangeActivity">
+
+    <include
+        android:id="@+id/changeStatToolbar"
+        layout="@layout/app_toolbar"></include>
+
+    <Button
+        android:id="@+id/okButton"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="25dp"
+        android:layout_marginTop="98dp"
+        android:text="OK" />
+
+    <EditText
+        android:id="@+id/newStatus"
+        android:layout_width="243dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/okButton"
+        android:layout_toStartOf="@+id/okButton"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name" />
+
+
+</RelativeLayout>
