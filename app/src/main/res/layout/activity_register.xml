@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegisterActivity">
+
+    <EditText
+        android:id="@+id/userNameR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="75dp"
+        android:ems="10"
+        android:hint="John Doe"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/userEmailR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="129dp"
+        android:ems="10"
+        android:hint="abc@example.com"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/userPasswordR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="187dp"
+        android:ems="10"
+        android:hint="111111"
+        android:inputType="textPassword" />
+
+
+    <Button
+        android:id="@+id/registerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Register" />
+
+
+</RelativeLayout>
