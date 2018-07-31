@@ -26,7 +26,9 @@
             android:name=".SettingActivity"
             android:parentActivityName=".ChatActivity" />
         <activity android:name=".ChangeStatusActivity" />
-        <activity android:name=".AllUsersActivity" />
+        <activity
+            android:name=".AllUsersActivity"
+            android:parentActivityName=".ChatActivity" />
         <activity android:name=".StartPageActivity" />
         <activity
             android:name=".StatusChangeActivity"
