@@ -86,7 +86,7 @@ public class ChatActivity extends AppCompatActivity {
             LogoutUser();
         }
         if (item.getItemId() == R.id.allUserButtonC) {
-            Intent in = new Intent(this, SettingActivity.class);
+            Intent in = new Intent(this, AllUsersActivity.class);
             startActivity(in);
         }
         return true;
