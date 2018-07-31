@@ -10,11 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.squareup.picasso.Picasso;
@@ -27,6 +26,8 @@ public class AllUsersActivity extends AppCompatActivity {
     RecyclerView recyclerView;
 
     Query query;
+    DatabaseReference databaseReference;
+
     FirebaseRecyclerAdapter<AllUsers, AllUserViewHolder> firebaseRecyclerAdapter;
     FirebaseRecyclerOptions<AllUsers> options;
 
@@ -42,17 +43,10 @@ public class AllUsersActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Users");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        query = FirebaseDatabase.getInstance().getReference().child("User");
-
-        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(firebaseRecyclerAdapter);
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        query = databaseReference.child("User");
 
         options = new FirebaseRecyclerOptions.Builder<AllUsers>()
                 .setQuery(query, AllUsers.class)
@@ -61,8 +55,6 @@ public class AllUsersActivity extends AppCompatActivity {
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<AllUsers, AllUserViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull AllUserViewHolder holder, int position, @NonNull AllUsers model) {
-
-                Toast.makeText(getApplicationContext(), "Biding", Toast.LENGTH_LONG).show();
                 holder.setUserName(model.getUserName());
                 holder.setUserName(model.getUserStatus());
                 holder.setUserImage(model.getUserImage());
@@ -75,12 +67,16 @@ public class AllUsersActivity extends AppCompatActivity {
                 return new AllUserViewHolder(LayoutInflater.from(viewGroup.getContext())
                         .inflate((R.layout.all_user_display_layout), viewGroup, false));
             }
-
-            @Override
-            public void onError(@NonNull DatabaseError error) {
-                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
-            }
         };
+
+        recyclerView.setAdapter(firebaseRecyclerAdapter);
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
         firebaseRecyclerAdapter.startListening();
 
