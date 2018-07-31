@@ -63,12 +63,12 @@ public class SettingActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 userName.setText(dataSnapshot.child("userName").getValue().toString());
                 userStatus.setText(dataSnapshot.child("userStatus").getValue().toString());
-
+                String imageUrl = dataSnapshot.child("userImage").getValue().toString();
+                Picasso.get().load(imageUrl).error(R.drawable.default_profile).into(userImage);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
 
@@ -79,9 +79,7 @@ public class SettingActivity extends AppCompatActivity {
         changeImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 CropTheImage();
-
             }
         });
 
@@ -117,22 +115,8 @@ public class SettingActivity extends AppCompatActivity {
 
 
                 Picasso.get().load(result.getUri()).error(R.drawable.default_profile).into(userImage);
-
-//                storageReference.child(mAuth.getCurrentUser().getUid() + ".jpg").putFile(result.getUri())
-//                        .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-//                                if (task.isSuccessful()) {
-//                                    Toast.makeText(getApplicationContext(), "Saving to database: Success", Toast.LENGTH_LONG).show();
-//                                } else {
-//                                    Toast.makeText(getApplicationContext(), "Saving to database: Failed: " + task.getException().toString(), Toast.LENGTH_LONG).show();
-//                                }
-//                            }
-//                        });
-
-
-                final UploadTask uploadTask = storageReference.child(mAuth.getCurrentUser().getUid() + ".jpg").putFile(result.getUri());
-
+                storageReference = storageReference.child(mAuth.getCurrentUser().getUid() + ".jpg");
+                UploadTask uploadTask = storageReference.putFile(result.getUri());
                 Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                     @Override
                     public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
@@ -145,15 +129,22 @@ public class SettingActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
                         if (task.isSuccessful()) {
-                            Uri uri = task.getResult();
-                            Toast.makeText(getApplicationContext(), "Saving to database: success: " + uri.toString(), Toast.LENGTH_LONG).show();
-//                            databaseReference.child("userImage").setValue(uri.toString());
+                            databaseReference.child("userImage").setValue(task.getResult().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(getApplicationContext(), "Database success:" + task.getResult().toString(), Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Database success:" + task.getException().toString(), Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
                         } else {
-                            Toast.makeText(getApplicationContext(), "Saving to database: Failed: " + task.getException().toString(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), task.getException().toString(), Toast.LENGTH_LONG).show();
                         }
+
                     }
                 });
-
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Toast.makeText(this, "Cropping failed: " + result.getError(), Toast.LENGTH_LONG).show();
