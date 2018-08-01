@@ -17,6 +17,8 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -47,6 +49,7 @@ public class AllUsersActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.keepSynced(true);
         query = databaseReference.child("User");
 
         options = new FirebaseRecyclerOptions.Builder<AllUsers>()
@@ -124,9 +127,32 @@ public class AllUsersActivity extends AppCompatActivity {
 //
 //        }
 
-        public void setUserThumbImage(String userThumbImage) {
-            CircleImageView image = view.findViewById(R.id.allUserProfileImage);
-            Picasso.get().load(userThumbImage).error(R.drawable.default_profile).resize(100, 100).into(image);
+        public void setUserThumbImage(final String userThumbImage) {
+            final CircleImageView image = view.findViewById(R.id.allUserProfileImage);
+
+            Picasso.get()
+                    .load(userThumbImage)
+                    .networkPolicy(NetworkPolicy.OFFLINE)
+                    .placeholder(R.drawable.default_profile)
+                    .resize(100, 100)
+                    .into(image, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+
+                            Picasso.get()
+                                    .load(userThumbImage)
+                                    .placeholder(R.drawable.default_profile)
+                                    .resize(100, 100)
+                                    .into(image);
+
+                        }
+                    });
+
         }
     }
 }

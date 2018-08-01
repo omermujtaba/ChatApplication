@@ -26,6 +26,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -66,13 +68,12 @@ public class SettingActivity extends AppCompatActivity {
         changStatus = findViewById(R.id.changeStatusButton);
         changeImage = findViewById(R.id.changeImageButton);
         toolbar = findViewById(R.id.settingToolBar);
-//        progressBar = findViewById(R.id.progressBarSettings);
         mAuth = FirebaseAuth.getInstance();
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("User").child(mAuth.getCurrentUser().getUid());
+        databaseReference.keepSynced(true);
         storageReference = FirebaseStorage.getInstance().getReference().child("ProfilePictures");
         storageReferenceThumb = FirebaseStorage.getInstance().getReference().child("ThumbImages");
-//        progressBar.setVisibility(View.VISIBLE);
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -80,14 +81,31 @@ public class SettingActivity extends AppCompatActivity {
 
                 userName.setText(dataSnapshot.child("userName").getValue().toString());
                 userStatus.setText(dataSnapshot.child("userStatus").getValue().toString());
-                String imageUrl = dataSnapshot.child("userThumbImage").getValue().toString();
+                final String imageUrl = dataSnapshot.child("userThumbImage").getValue().toString();
 
                 if (checkImage) {
-                    Picasso.get().load(imageUrl).error(R.drawable.default_profile).into(userImage);
+
+                    Picasso.get()
+                            .load(imageUrl)
+                            .networkPolicy(NetworkPolicy.OFFLINE)
+                            .placeholder(R.drawable.default_profile)
+                            .into(userImage, new Callback() {
+                                @Override
+                                public void onSuccess() {
+
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+                                    Picasso.get()
+                                            .load(imageUrl)
+                                            .placeholder(R.drawable.default_profile)
+                                            .into(userImage);
+                                }
+                            });
+
+
                 }
-
-//                progressBar.setVisibility(View.GONE);
-
             }
 
             @Override
