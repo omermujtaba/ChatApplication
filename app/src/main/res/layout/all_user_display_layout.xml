@@ -28,13 +28,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Default Name"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/allUserStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Default Status" />
+                android:text="Default Status"
+                android:textSize="16sp" />
 
         </LinearLayout>
 

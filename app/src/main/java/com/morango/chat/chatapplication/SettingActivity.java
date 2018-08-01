@@ -1,6 +1,7 @@
 package com.morango.chat.chatapplication;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -28,7 +30,11 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+
 import de.hdodenhof.circleimageview.CircleImageView;
+import id.zelory.compressor.Compressor;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -39,11 +45,15 @@ public class SettingActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     FirebaseAuth mAuth;
+
     DatabaseReference databaseReference;
     StorageReference storageReference;
-    StorageReference storageReferenceThumb;
 
-    //Bitmap bitmap;
+    boolean checkImage = true;
+    StorageReference storageReferenceThumb;
+    Bitmap bitmap;
+
+//    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,24 +66,27 @@ public class SettingActivity extends AppCompatActivity {
         changStatus = findViewById(R.id.changeStatusButton);
         changeImage = findViewById(R.id.changeImageButton);
         toolbar = findViewById(R.id.settingToolBar);
+//        progressBar = findViewById(R.id.progressBarSettings);
         mAuth = FirebaseAuth.getInstance();
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("User").child(mAuth.getCurrentUser().getUid());
         storageReference = FirebaseStorage.getInstance().getReference().child("ProfilePictures");
-//        storageReferenceThumb = FirebaseStorage.getInstance().getReference().child("ThumbImages");
+        storageReferenceThumb = FirebaseStorage.getInstance().getReference().child("ThumbImages");
+//        progressBar.setVisibility(View.VISIBLE);
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 userName.setText(dataSnapshot.child("userName").getValue().toString());
                 userStatus.setText(dataSnapshot.child("userStatus").getValue().toString());
-                String imageUrl = dataSnapshot.child("userImage").getValue().toString();
+                String imageUrl = dataSnapshot.child("userThumbImage").getValue().toString();
 
-                try {
+                if (checkImage) {
                     Picasso.get().load(imageUrl).error(R.drawable.default_profile).into(userImage);
-                } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
                 }
+
+//                progressBar.setVisibility(View.GONE);
 
             }
 
@@ -116,34 +129,35 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-//
-//                File orignalImage = new File(result.getUri().getPath());
-//
-//                try{
-//                   bitmap = new Compressor(this)
-//                            .setMaxHeight(200)
-//                            .setMaxWidth(200)
-//                            .setQuality(50)
-//                            .compressToBitmap(orignalImage);
-//
-//                }catch (Exception ex){
-//
-//                }
-//
-//                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//                bitmap.compress(Bitmap.CompressFormat.JPEG,50, byteArrayOutputStream);
-//                byte[] thumbByte = byteArrayOutputStream.toByteArray();
+
+                if (checkImage) {
+                    Picasso.get().load(result.getUri()).error(R.drawable.default_profile).into(userImage);
+                    checkImage = false;
+                }
+
+                File orignalImage = new File(result.getUri().getPath());
+
+                try {
+                    bitmap = new Compressor(this)
+                            .setMaxHeight(200)
+                            .setMaxWidth(200)
+                            .setQuality(50)
+                            .compressToBitmap(orignalImage);
+                } catch (Exception ex) {
+                }
+
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+                byte[] thumbByte = byteArrayOutputStream.toByteArray();
 
 
-                Picasso.get().load(result.getUri()).error(R.drawable.default_profile).into(userImage);
                 storageReference = storageReference.child(mAuth.getCurrentUser().getUid() + ".jpg");
-//                storageReferenceThumb = storageReferenceThumb.child(mAuth.getCurrentUser().getUid() + ".jpg");
 
                 UploadTask uploadTask = storageReference.putFile(result.getUri());
                 Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
@@ -154,20 +168,52 @@ public class SettingActivity extends AppCompatActivity {
                         }
                         return storageReference.getDownloadUrl();
                     }
+
                 }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
                         if (task.isSuccessful()) {
-//                            databaseReference.child("userImage").setValue(task.getResult().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<Void> task) {
-//                                    if (task.isSuccessful()) {
-//                                        Toast.makeText(getApplicationContext(), "Database success:" + task.getResult().toString(), Toast.LENGTH_LONG).show();
-//                                    } else {
-//                                        Toast.makeText(getApplicationContext(), "Database success:" + task.getException().toString(), Toast.LENGTH_LONG).show();
-//                                    }
-//                                }
-//                            });
+
+                            databaseReference.child("userImage").setValue(task.getResult().toString()).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(getApplicationContext(), "Database failure:" + e.toString(), Toast.LENGTH_LONG).show();
+                                }
+                            });
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), task.getException().toString(), Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                });
+
+                storageReferenceThumb = storageReferenceThumb.child(mAuth.getCurrentUser().getUid() + ".jpg");
+
+
+                uploadTask = storageReferenceThumb.putBytes(thumbByte);
+
+                Task<Uri> taskUri = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    @Override
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        if (!task.isSuccessful()) {
+                            throw task.getException();
+                        }
+                        return storageReferenceThumb.getDownloadUrl();
+                    }
+
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful()) {
+
+                            databaseReference.child("userThumbImage").setValue(task.getResult().toString()).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(getApplicationContext(), "Database failure:" + e.toString(), Toast.LENGTH_LONG).show();
+                                }
+                            });
+
                         } else {
                             Toast.makeText(getApplicationContext(), task.getException().toString(), Toast.LENGTH_LONG).show();
                         }

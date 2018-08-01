@@ -56,8 +56,8 @@ public class AllUsersActivity extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull AllUserViewHolder holder, int position, @NonNull AllUsers model) {
                 holder.setUserName(model.getUserName());
-                holder.setUserName(model.getUserStatus());
-                holder.setUserImage(model.getUserImage());
+                holder.setUserStatus(model.getUserStatus());
+                holder.setUserThumbImage(model.getUserThumbImage());
             }
 
             @NonNull
@@ -70,8 +70,6 @@ public class AllUsersActivity extends AppCompatActivity {
         };
 
         recyclerView.setAdapter(firebaseRecyclerAdapter);
-
-
     }
 
     @Override
@@ -110,11 +108,15 @@ public class AllUsersActivity extends AppCompatActivity {
             status.setText(userStatus);
         }
 
-        public void setUserImage(String userImage) {
+//        public void setUserImage(String userImage) {
+//            CircleImageView image = view.findViewById(R.id.allUserProfileImage);
+//            Picasso.get().load(userImage).into(image);
+//
+//        }
+
+        public void setUserThumbImage(String userThumbImage) {
             CircleImageView image = view.findViewById(R.id.allUserProfileImage);
-            Picasso.get().load(userImage).into(image);
-
+            Picasso.get().load(userThumbImage).into(image);
         }
-
     }
 }
