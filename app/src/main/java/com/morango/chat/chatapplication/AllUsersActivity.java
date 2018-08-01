@@ -1,5 +1,6 @@
 package com.morango.chat.chatapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -54,10 +55,19 @@ public class AllUsersActivity extends AppCompatActivity {
 
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<AllUsers, AllUserViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull AllUserViewHolder holder, int position, @NonNull AllUsers model) {
+            protected void onBindViewHolder(@NonNull AllUserViewHolder holder, final int position, @NonNull AllUsers model) {
                 holder.setUserName(model.getUserName());
                 holder.setUserStatus(model.getUserStatus());
                 holder.setUserThumbImage(model.getUserThumbImage());
+
+                holder.view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                        intent.putExtra("userid", getRef(position).getKey());
+                        startActivity(intent);
+                    }
+                });
             }
 
             @NonNull
@@ -116,7 +126,7 @@ public class AllUsersActivity extends AppCompatActivity {
 
         public void setUserThumbImage(String userThumbImage) {
             CircleImageView image = view.findViewById(R.id.allUserProfileImage);
-            Picasso.get().load(userThumbImage).into(image);
+            Picasso.get().load(userThumbImage).error(R.drawable.default_profile).resize(100, 100).into(image);
         }
     }
 }
