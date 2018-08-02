@@ -12,9 +12,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -24,6 +28,8 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
 
     ProgressDialog progressDialog;
+
+    private DatabaseReference userReference;
 
 
     @Override
@@ -36,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         userPassword = findViewById(R.id.userPasswordL);
         loginButton = findViewById(R.id.loginButton);
         mAuth = FirebaseAuth.getInstance();
+        userReference = FirebaseDatabase.getInstance().getReference().child("User");
 
         progressDialog = new ProgressDialog(this);
 
@@ -64,10 +71,21 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                Intent in = new Intent(getApplicationContext(), ChatActivity.class);
-                                in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(in);
-                                finish();
+
+                                String uID = mAuth.getCurrentUser().getUid();
+                                String token = FirebaseInstanceId.getInstance().getToken();
+
+                                userReference.child(uID).child("deviceToken").setValue(token)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Intent in = new Intent(getApplicationContext(), ChatActivity.class);
+                                                in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                startActivity(in);
+                                                finish();
+                                            }
+                                        });
+
                             } else {
                                 Toast.makeText(getApplicationContext(), task.getException().toString(), Toast.LENGTH_LONG).show();
                             }
