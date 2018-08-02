@@ -17,6 +17,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -66,12 +67,16 @@ public class RegisterActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
+
+                        String token = FirebaseInstanceId.getInstance().getToken();
+
                         databaseReference = FirebaseDatabase.getInstance().getReference().child("User").child(mAuth.getCurrentUser().getUid());
                         databaseReference.child("userName").setValue(name);
                         databaseReference.child("userEmail").setValue(email);
                         databaseReference.child("userPassword").setValue(password);
                         databaseReference.child("userStatus").setValue("Default status");
                         databaseReference.child("userImage").setValue("Default");
+                        databaseReference.child("deviceToken").setValue(token);
                         databaseReference.child("userThumbImage").setValue("Default").addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {

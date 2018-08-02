@@ -13,6 +13,15 @@
         android:supportsRtl="true"
         android:name=".ChatOffline"
         android:theme="@style/AppTheme">
+
+        <service android:name=".FirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT">
+
+                </action>
+            </intent-filter>
+        </service>
+
         <activity android:name=".SplashScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,7 +48,12 @@
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
             android:name=".ProfileActivity"
-            android:parentActivityName=".AllUsersActivity"></activity>
+            android:parentActivityName=".AllUsersActivity">
+            <intent-filter>
+                <action android:name="com.morango.chat.chatapplication_TARGET_NOTIFICATION"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

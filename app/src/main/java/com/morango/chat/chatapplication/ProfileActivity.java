@@ -51,7 +51,12 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         mAuth = FirebaseAuth.getInstance();
-        recieverUId = getIntent().getStringExtra("userid");
+
+        if (getIntent().getStringExtra("userid") != null) {
+            recieverUId = getIntent().getStringExtra("userid");
+        }
+
+
         currentUId = mAuth.getCurrentUser().getUid();
 
         userImage = findViewById(R.id.profileUserImage);
@@ -252,7 +257,6 @@ public class ProfileActivity extends AppCompatActivity {
                                                                 sendRequest.setEnabled(true);
                                                                 CURRENT_STATE = FRIENDS;
                                                                 sendRequest.setText("Unfriend");
-
                                                                 DisableDeclineButton();
                                                             }
                                                         }
