@@ -93,33 +93,31 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                        if (dataSnapshot.exists()) {
-                            if (dataSnapshot.hasChild(recieverUId)) {
-                                String requestType = dataSnapshot.child(recieverUId).child("requestType").getValue().toString();
 
-                                if (requestType.equals("SENT")) {
-                                    CURRENT_STATE = REQUEST_SENT;
-                                    sendRequest.setText("Cancel request");
-                                    declineRequest.setVisibility(View.INVISIBLE);
-                                    declineRequest.setEnabled(false);
+                        if (dataSnapshot.hasChild(recieverUId)) {
+                            String requestType = dataSnapshot.child(recieverUId).child("requestType").getValue().toString();
 
-                                } else if (requestType.equals("RECIEVED")) {
-                                    CURRENT_STATE = REQUEST_RECIEVED;
-                                    sendRequest.setText("Accept request");
+                            if (requestType.equals("SENT")) {
+                                CURRENT_STATE = REQUEST_SENT;
+                                sendRequest.setText("Cancel request");
+                                declineRequest.setVisibility(View.INVISIBLE);
+                                declineRequest.setEnabled(false);
 
-                                    declineRequest.setVisibility(View.VISIBLE);
-                                    declineRequest.setEnabled(true);
+                            } else if (requestType.equals("RECIEVED")) {
+                                CURRENT_STATE = REQUEST_RECIEVED;
+                                sendRequest.setText("Accept request");
 
-                                    declineRequest.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            DeclineRequest();
-                                        }
-                                    });
+                                declineRequest.setVisibility(View.VISIBLE);
+                                declineRequest.setEnabled(true);
 
-                                }
+                                declineRequest.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        DeclineRequest();
+                                    }
+                                });
+
                             }
-
                         } else {
                             friendReference.child(currentUId).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -238,11 +236,11 @@ public class ProfileActivity extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMMM-yyyy");
         final String currentDate = dateFormat.format(calendar.getTime());
 
-        friendReference.child(currentUId).child(recieverUId).setValue(currentDate)
+        friendReference.child(currentUId).child(recieverUId).child("date").setValue(currentDate)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        friendReference.child(recieverUId).child(currentUId).setValue(currentDate)
+                        friendReference.child(recieverUId).child(currentUId).child("date").setValue(currentDate)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {

@@ -6,19 +6,16 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".ChatOffline"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name=".ChatOffline"
         android:theme="@style/AppTheme">
-
         <service android:name=".FirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT">
-
-                </action>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"></action>
             </intent-filter>
         </service>
 
@@ -50,10 +47,14 @@
             android:name=".ProfileActivity"
             android:parentActivityName=".AllUsersActivity">
             <intent-filter>
-                <action android:name="com.morango.chat.chatapplication_TARGET_NOTIFICATION"></action>
-                <category android:name="android.intent.category.DEFAULT"></category>
+                <action android:name="com.morango.chat.chatapplication_TARGET_NOTIFICATION" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainChatActivity"
+            android:parentActivityName=".ChatActivity"></activity>
     </application>
 
 </manifest>
