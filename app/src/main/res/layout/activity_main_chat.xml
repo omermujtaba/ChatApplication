@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/background_light"
     tools:context=".MainChatActivity">
 
     <include
@@ -17,17 +18,18 @@
         android:orientation="horizontal"
         android:padding="5dp">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/sendImage"
             android:layout_width="35dp"
             android:layout_height="match_parent"
+            android:background="@android:color/background_light"
             android:padding="2dp"
             android:src="@drawable/ic_select_image_to_send" />
 
 
         <EditText
             android:id="@+id/messageText"
-            android:layout_width="100dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
@@ -37,10 +39,11 @@
             android:padding="10dp"
             android:textColorLink="@android:color/background_light" />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/sendMessage"
             android:layout_width="35dp"
             android:layout_height="match_parent"
+            android:background="@android:color/background_light"
             android:padding="2dp"
             android:src="@drawable/ic_send_message" />
 

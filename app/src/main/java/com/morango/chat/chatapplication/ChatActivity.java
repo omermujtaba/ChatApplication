@@ -67,7 +67,7 @@ public class ChatActivity extends AppCompatActivity {
         if (mCurrentUser == null) {
             LogoutUser();
         } else if (mCurrentUser != null) {
-            databaseReference.child("online").setValue(true);
+            databaseReference.child("online").setValue("true");
         }
     }
 

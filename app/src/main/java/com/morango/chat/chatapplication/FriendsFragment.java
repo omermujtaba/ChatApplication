@@ -90,7 +90,7 @@ public class FriendsFragment extends Fragment {
                         String userImage = dataSnapshot.child("userThumbImage").getValue().toString();
 
                         if (dataSnapshot.hasChild("online")) {
-                            boolean onlineStatus = (boolean) dataSnapshot.child("online").getValue();
+                            String onlineStatus = dataSnapshot.child("online").getValue().toString();
                             holder.setUserOnline(onlineStatus);
 
                         }
@@ -132,7 +132,10 @@ public class FriendsFragment extends Fragment {
                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {
-
+                                                                Intent in = new Intent(getContext(), MainChatActivity.class);
+                                                                in.putExtra("userid", listUserId);
+                                                                in.putExtra("userName", userName);
+                                                                startActivity(in);
                                                             }
                                                         });
                                             }
@@ -230,10 +233,10 @@ public class FriendsFragment extends Fragment {
 
         }
 
-        public void setUserOnline(boolean userOnline) {
+        public void setUserOnline(String userOnline) {
             ImageView imageView = view.findViewById(R.id.onlineStatus);
 
-            if (userOnline) {
+            if (userOnline.equals("true")) {
                 imageView.setVisibility(View.VISIBLE);
             } else {
                 imageView.setVisibility(View.INVISIBLE);
