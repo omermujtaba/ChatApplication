@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,7 +29,9 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -46,6 +51,12 @@ public class MainChatActivity extends AppCompatActivity {
     private LayoutInflater layoutInflater;
     private View view;
     private ActionBar actionBar;
+
+    private final List<Messages> messagesList = new ArrayList<>();
+    private RecyclerView userMessageList;
+    private LinearLayoutManager linearLayoutManager;
+    private MessageAdapter messageAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,14 +96,29 @@ public class MainChatActivity extends AppCompatActivity {
         message = findViewById(R.id.messageText);
 
 
+        messageAdapter = new MessageAdapter(messagesList);
+        userMessageList = findViewById(R.id.messageListUsers);
+        linearLayoutManager = new LinearLayoutManager(this);
+        userMessageList.setHasFixedSize(true);
+        userMessageList.setLayoutManager(linearLayoutManager);
+        userMessageList.setAdapter(messageAdapter);
+
+        FetchMessages();
+
         /* implementation */
         userName.setText(messagerReciverName);
 
         databaseReference.child("User").child(messageRecieverId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String online = "";
+                try {
+                    online = dataSnapshot.child("online").getValue().toString();
 
-                String online = dataSnapshot.child("online").getValue().toString();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+
                 final String userThumb = dataSnapshot.child("userThumbImage").getValue().toString();
 
                 Picasso.get()
@@ -118,14 +144,20 @@ public class MainChatActivity extends AppCompatActivity {
                             }
                         });
 
-                if (online.equals("true")) {
+                if (online.equals("true") && !online.isEmpty()) {
                     lastSeen.setText("Online");
                 } else {
 
                     LastSeenTime lastSeenTime = new LastSeenTime();
 
                     long lastSeenTimeParse = Long.parseLong(online);
-                    String lastSeemDisplayTime = LastSeenTime.getTimeAgo(lastSeenTimeParse).toString();
+
+                    String lastSeemDisplayTime = "";
+                    try {
+                        lastSeemDisplayTime = LastSeenTime.getTimeAgo(lastSeenTimeParse).toString();
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
 
                     lastSeen.setText(lastSeemDisplayTime);
                 }
@@ -158,6 +190,42 @@ public class MainChatActivity extends AppCompatActivity {
 
     }
 
+    private void FetchMessages() {
+
+        databaseReference.child("Messages")
+                .child(messageSenderId).child(messageRecieverId)
+                .addChildEventListener(new ChildEventListener() {
+
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Messages messages = dataSnapshot.getValue(Messages.class);
+                        messagesList.add(messages);
+                        messageAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
+
     private void SendMessage(String messageText) {
 
         if (TextUtils.isEmpty(messageText)) {
@@ -175,6 +243,7 @@ public class MainChatActivity extends AppCompatActivity {
             messageTextBody.put("seen", false);
             messageTextBody.put("type", "text");
             messageTextBody.put("time", ServerValue.TIMESTAMP);
+            messageTextBody.put("from", messageSenderId);
 
             Map messageBodyDetails = new HashMap();
 
@@ -196,5 +265,6 @@ public class MainChatActivity extends AppCompatActivity {
 
         }
     }
+
 }
 

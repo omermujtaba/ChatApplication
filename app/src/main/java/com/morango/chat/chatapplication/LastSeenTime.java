@@ -41,6 +41,4 @@ public class LastSeenTime extends Application {
             return "last seen" + diff / DAY_MILLS + " days ago";
         }
     }
-
-
 }
