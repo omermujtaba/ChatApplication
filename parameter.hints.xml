@@ -1,0 +1,9 @@
+<application>
+  <component name="ParameterNameHintsSettings">
+    <blacklists>
+      <blacklist language="Java">
+        <added pattern="com.grappetite.zoya.activities.NewPeriodTrackerActivity.getEvent(newStartDate,newPeriodLength)" />
+      </blacklist>
+    </blacklists>
+  </component>
+</application>
