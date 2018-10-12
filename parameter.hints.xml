@@ -3,6 +3,7 @@
     <blacklists>
       <blacklist language="Java">
         <added pattern="com.grappetite.zoya.activities.NewPeriodTrackerActivity.getEvent(newStartDate,newPeriodLength)" />
+        <added pattern="android.content.Intent.getIntExtra(name,defaultValue)" />
       </blacklist>
     </blacklists>
   </component>
